@@ -150,11 +150,13 @@ const SeoulMap = (function () {
         if (!naverMap) {
             console.log("Initializing Naver Map (Dark Mode via CSS)");
             naverMap = new naver.maps.Map('naver-map', {
+                gl: true,
                 center: new naver.maps.LatLng(lat, lng),
                 zoom: 15,
                 mapDataControl: false,
                 scaleControl: false,
-                isNightModeEnabled: true
+                isNightModeEnabled: true,
+                customStyleId: '4166f2a1-c2fa-4d09-92ae-13802768e969'
             });
         } else {
             const newCenter = new naver.maps.LatLng(lat, lng);
