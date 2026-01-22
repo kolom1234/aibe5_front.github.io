@@ -160,6 +160,7 @@ const SeoulMap = (function () {
             const newCenter = new naver.maps.LatLng(lat, lng);
             naverMap.setCenter(newCenter);
             naverMap.setZoom(15);
+            naverMap.isNightModeEnabled(true);
         }
 
         console.log(`Switched to Naver Map: ${name}`);
