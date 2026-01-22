@@ -383,26 +383,27 @@
         <div class="content-panel" id="content-panel">
             <!-- Main Section -->
             <main class="main" id="places">
-                <div class="container">
-                    <!-- Seoul Map Section -->
-                    <div id="seoul-map-section" class="seoul-map-section">
-                        <div class="map-wrapper" id="seoul-map-wrapper">
-                            <svg class="seoul-map" viewBox="0 0 800 600" id="seoul-svg">
-                                <text x="400" y="300" text-anchor="middle" id="loading-text">지도를 불러오는 중...</text>
-                            </svg>
-                        </div>
-                        <div id="naver-map-wrapper" class="naver-map-wrapper">
-                            <div id="naver-map" style="width:100%; height:100%;"></div>
-                            <button class="map-back-btn" onclick="SeoulMap.backToSeoul()">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M19 12H5M12 19l-7-7 7-7" />
-                                </svg>
-                                전체 지도로
-                            </button>
-                        </div>
-                    </div>
 
+                <!-- Seoul Map Section -->
+                <div id="seoul-map-section" class="seoul-map-section">
+                    <div class="map-wrapper" id="seoul-map-wrapper">
+                        <svg class="seoul-map" viewBox="0 0 800 600" id="seoul-svg">
+                            <text x="400" y="300" text-anchor="middle" id="loading-text">지도를 불러오는 중...</text>
+                        </svg>
+                    </div>
+                    <div id="naver-map-wrapper" class="naver-map-wrapper">
+                        <div id="naver-map" style="width:100%; height:100%;"></div>
+                        <button class="map-back-btn" onclick="SeoulMap.backToSeoul()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                            전체 지도로
+                        </button>
+                    </div>
+                </div>
+
+                <div class="container">
                     <!-- Hero -->
                     <div class="main__hero reveal">
                         <h2 class="main__title">
