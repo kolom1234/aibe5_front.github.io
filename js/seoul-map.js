@@ -152,32 +152,14 @@ const SeoulMap = (function () {
 
         // Initialize Naver Map if first time, else move to new location
         if (!naverMap) {
-            // Define Custom Map Type
-            const customMapType = new naver.maps.ImageMapType({
-                name: 'custom_style',
-                minZoom: 0,
-                maxZoom: 20,
-                tileSize: new naver.maps.Size(256, 256),
-                projection: naver.maps.fromLatLngToWebMercator,
-                repeatX: true,
-                tileSet: '',
-                getTile: function (x, y, z) {
-                    const domain = 'https://map.pstatic.net/nrb/styles';
-                    return `${domain}/${CUSTOM_STYLE_ID}/${CUSTOM_STYLE_VERSION}/${z}/${x}/${y}.png?mt=bg.ol.sw.ar.lko`;
-                }
-            });
-
-            const registry = new naver.maps.MapTypeRegistry();
-            registry.set('custom_style', customMapType);
-
             naverMap = new naver.maps.Map('naver-map', {
                 center: new naver.maps.LatLng(lat, lng),
                 zoom: 14,
-                mapTypes: registry,
-                mapTypeId: 'custom_style',
                 mapDataControl: false,
                 scaleControl: false,
-                backgroundColor: '#121212'
+                backgroundColor: '#121212',
+                gl: true, // Activate GL (Vector Map)
+                customStyleId: CUSTOM_STYLE_ID // My Style ID
             });
         } else {
             const newCenter = new naver.maps.LatLng(lat, lng);
