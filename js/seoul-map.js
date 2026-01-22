@@ -152,12 +152,10 @@ const SeoulMap = (function () {
 
         // Initialize Naver Map if first time, else move to new location
         if (!naverMap) {
+            console.log("Initializing Naver Map with Style ID:", CUSTOM_STYLE_ID);
             naverMap = new naver.maps.Map('naver-map', {
                 center: new naver.maps.LatLng(lat, lng),
-                zoom: 14,
-                mapDataControl: false,
-                scaleControl: false,
-                backgroundColor: '#121212',
+                zoom: 15,
                 gl: true, // Activate GL (Vector Map)
                 customStyleId: CUSTOM_STYLE_ID // My Style ID
             });
