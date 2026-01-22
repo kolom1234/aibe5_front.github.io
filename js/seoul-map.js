@@ -150,8 +150,10 @@ const SeoulMap = (function () {
         if (!naverMap) {
             console.log("Initializing Naver Map");
             naverMap = new naver.maps.Map('naver-map', {
+                gl: true,
                 center: new naver.maps.LatLng(lat, lng),
                 zoom: 15,
+                customStyleId: '4166f2a1-c2fa-4d09-92ae-13802768e969',
                 mapDataControl: false,
                 scaleControl: false
             });
