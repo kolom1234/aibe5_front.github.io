@@ -148,7 +148,6 @@ const SeoulMap = (function () {
 
         // Style Definition
         const CUSTOM_STYLE_ID = '4166f2a1-c2fa-4d09-92ae-13802768e969';
-        const CUSTOM_STYLE_VERSION = '20260122101856';
 
         // Initialize Naver Map if first time, else move to new location
         if (!naverMap) {
