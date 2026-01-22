@@ -163,7 +163,7 @@ const SeoulMap = (function () {
                 tileSet: '',
                 getTile: function (x, y, z) {
                     const domain = 'https://map.pstatic.net/nrb/styles';
-                    return `${domain}/${CUSTOM_STYLE_ID}/${z}/${x}/${y}.png?mt=bg.ol.sw.ar.lko&ts=${CUSTOM_STYLE_VERSION}`;
+                    return `${domain}/${CUSTOM_STYLE_ID}/${CUSTOM_STYLE_VERSION}/${z}/${x}/${y}.png?mt=bg.ol.sw.ar.lko`;
                 }
             });
 
