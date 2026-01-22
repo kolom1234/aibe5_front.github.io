@@ -61,6 +61,13 @@
 #naver-map {
     width: 100%;
     height: 100%;
+    /* Dark theme via CSS filter - applies consistently across all browsers */
+    filter: invert(90%) hue-rotate(180deg) brightness(0.95) contrast(1.05);
+}
+
+/* Fix text/labels to be readable */
+#naver-map * {
+    filter: invert(100%) hue-rotate(180deg);
 }
 
 .map-back-btn {

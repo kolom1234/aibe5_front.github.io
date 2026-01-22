@@ -148,20 +148,17 @@ const SeoulMap = (function () {
 
         // Initialize Naver Map if first time, else move to new location
         if (!naverMap) {
-            console.log("Initializing Naver Map (Using Native Custom Dark Style)");
+            console.log("Initializing Naver Map with dark theme");
             naverMap = new naver.maps.Map('naver-map', {
                 center: new naver.maps.LatLng(lat, lng),
                 zoom: 15,
                 mapDataControl: false,
-                scaleControl: false,
-                customStyleId: '4166f2a1-c2fa-4d09-92ae-13802768e969'
+                scaleControl: false
             });
         } else {
             const newCenter = new naver.maps.LatLng(lat, lng);
             naverMap.setCenter(newCenter);
             naverMap.setZoom(15);
-            //naverMap.isNightModeEnabled(true);
-            naverMap.setCustomStyleId('4166f2a1-c2fa-4d09-92ae-13802768e969');
         }
 
         console.log(`Switched to Naver Map: ${name}`);
