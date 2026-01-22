@@ -219,6 +219,7 @@ const SeoulMap = (function () {
 
         } else {
             // Opening
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             section.classList.add('active');
             init(); // Ensure init
             text.textContent = '지도 닫기';
