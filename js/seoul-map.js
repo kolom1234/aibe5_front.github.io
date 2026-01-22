@@ -146,13 +146,38 @@ const SeoulMap = (function () {
         seoulWrapper.classList.add('hidden');
         naverWrapper.classList.add('active');
 
+        // Style Definition
+        const CUSTOM_STYLE_ID = '4166f2a1-c2fa-4d09-92ae-13802768e969';
+        const CUSTOM_STYLE_VERSION = '20260122101856';
+
         // Initialize Naver Map if first time, else move to new location
         if (!naverMap) {
+            // Define Custom Map Type
+            const customMapType = new naver.maps.ImageMapType({
+                name: 'custom_style',
+                minZoom: 0,
+                maxZoom: 20,
+                tileSize: new naver.maps.Size(256, 256),
+                projection: naver.maps.fromLatLngToWebMercator,
+                repeatX: true,
+                tileSet: '',
+                getTile: function (x, y, z) {
+                    const domain = 'https://map.pstatic.net/nrb/styles';
+                    return `${domain}/${CUSTOM_STYLE_ID}/${z}/${x}/${y}.png?mt=bg.ol.sw.ar.lko&ts=${CUSTOM_STYLE_VERSION}`;
+                }
+            });
+
+            const registry = new naver.maps.MapTypeRegistry();
+            registry.set('custom_style', customMapType);
+
             naverMap = new naver.maps.Map('naver-map', {
                 center: new naver.maps.LatLng(lat, lng),
                 zoom: 14,
+                mapTypes: registry,
+                mapTypeId: 'custom_style',
                 mapDataControl: false,
-                scaleControl: false
+                scaleControl: false,
+                backgroundColor: '#121212'
             });
         } else {
             const newCenter = new naver.maps.LatLng(lat, lng);
