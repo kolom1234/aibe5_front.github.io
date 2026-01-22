@@ -155,14 +155,15 @@ const SeoulMap = (function () {
                 zoom: 15,
                 mapDataControl: false,
                 scaleControl: false,
-                isNightModeEnabled: true,
+                //isNightModeEnabled: true,
                 customStyleId: '4166f2a1-c2fa-4d09-92ae-13802768e969'
             });
         } else {
             const newCenter = new naver.maps.LatLng(lat, lng);
             naverMap.setCenter(newCenter);
             naverMap.setZoom(15);
-            naverMap.isNightModeEnabled(true);
+            //naverMap.isNightModeEnabled(true);
+            naverMap.setCustomStyleId('4166f2a1-c2fa-4d09-92ae-13802768e969');
         }
 
         console.log(`Switched to Naver Map: ${name}`);
