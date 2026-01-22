@@ -58,6 +58,12 @@
     visibility: visible;
 }
 
+#naver-map {
+    width: 100%;
+    height: 100%;
+    filter: invert(100%) hue-rotate(180deg) brightness(0.9) contrast(1.1) saturate(0.8);
+}
+
 .map-back-btn {
     position: absolute;
     top: 20px;

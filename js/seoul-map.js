@@ -148,17 +148,12 @@ const SeoulMap = (function () {
 
         // Initialize Naver Map if first time, else move to new location
         if (!naverMap) {
-            console.log("Initializing Naver Map with GL Custom Style");
-            const styleId = '4166f2a1-c2fa-4d09-92ae-13802768e969';
-
+            console.log("Initializing Naver Map (Dark Mode via CSS)");
             naverMap = new naver.maps.Map('naver-map', {
                 center: new naver.maps.LatLng(lat, lng),
                 zoom: 15,
-                gl: true, // Activate GL (Vector Map)
-                customStyleId: styleId, // My Style ID
                 mapDataControl: false,
-                scaleControl: false,
-                backgroundColor: '#121212'
+                scaleControl: false
             });
         } else {
             const newCenter = new naver.maps.LatLng(lat, lng);
