@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="틈새 - AI 여행 추천">
+    <title>AI 여행 추천 | 틈새</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/pages.css">
+
+    <style>
+        .recommend-page {
+            min-height: 100vh;
+            padding-top: 80px;
+            background: var(--color-light);
+        }
+
+        .recommend-header {
+            text-align: center;
+            padding: var(--space-12) 0;
+        }
+
+        .recommend-header__title {
+            font-family: var(--font-serif);
+            font-size: var(--text-4xl);
+            color: var(--color-dark);
+            margin-bottom: var(--space-3);
+        }
+
+        .recommend-header__title span {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .recommend-header__subtitle {
+            font-size: var(--text-lg);
+            color: var(--color-gray);
+        }
+
+        /* Tabs */
+        .recommend-tabs {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-10);
+        }
+
+        .recommend-tab {
+            padding: var(--space-4) var(--space-8);
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--color-gray);
+            background: var(--color-white);
+            border: 2px solid var(--color-secondary);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .recommend-tab:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .recommend-tab.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: var(--color-white);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Survey Section */
+        .survey-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--color-white);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-10);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .survey-progress {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-8);
+        }
+
+        .survey-progress__dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--color-secondary);
+            transition: all var(--transition-fast);
+        }
+
+        .survey-progress__dot.active {
+            background: var(--color-primary);
+            transform: scale(1.2);
+        }
+
+        .survey-progress__dot.completed {
+            background: var(--color-accent);
+        }
+
+        .survey-question {
+            display: none;
+            text-align: center;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .survey-question.active {
+            display: block;
+        }
+
+        .survey-question__number {
+            font-size: var(--text-sm);
+            color: var(--color-accent);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-3);
+        }
+
+        .survey-question__text {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--color-dark);
+            margin-bottom: var(--space-8);
+            line-height: 1.4;
+        }
+
+        .survey-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-8);
+        }
+
+        .survey-option {
+            padding: var(--space-4) var(--space-6);
+            font-size: var(--text-base);
+            color: var(--color-dark);
+            background: var(--color-secondary-light);
+            border: 2px solid transparent;
+            border-radius: var(--radius-xl);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .survey-option:hover {
+            border-color: var(--color-primary);
+            background: var(--color-white);
+        }
+
+        .survey-option.selected {
+            background: var(--color-primary);
+            color: var(--color-white);
+            border-color: var(--color-primary);
+        }
+
+        .survey-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--space-6);
+        }
+
+        /* Chat Section */
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--color-white);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chat-messages {
+            height: 450px;
+            overflow-y: auto;
+            padding: var(--space-6);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: var(--space-4) var(--space-5);
+            border-radius: var(--radius-xl);
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .chat-message--ai {
+            align-self: flex-start;
+            background: var(--color-secondary-light);
+            color: var(--color-dark);
+            border-bottom-left-radius: var(--radius-sm);
+        }
+
+        .chat-message--user {
+            align-self: flex-end;
+            background: var(--color-primary);
+            color: var(--color-white);
+            border-bottom-right-radius: var(--radius-sm);
+        }
+
+        .chat-message__sender {
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-1);
+            opacity: 0.7;
+        }
+
+        .chat-message__text {
+            font-size: var(--text-base);
+            line-height: 1.6;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: var(--space-3);
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--color-secondary);
+            background: var(--color-light);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: var(--space-4);
+            border: 2px solid var(--color-secondary);
+            border-radius: var(--radius-xl);
+            font-size: var(--text-base);
+            resize: none;
+            transition: border-color var(--transition-fast);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .chat-send-btn {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-primary);
+            color: var(--color-white);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-fast);
+        }
+
+        .chat-send-btn:hover {
+            background: var(--color-primary-light);
+            transform: scale(1.05);
+        }
+
+        .chat-send-btn:disabled {
+            background: var(--color-gray-light);
+            cursor: not-allowed;
+        }
+
+        /* Results Section */
+        .results-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: var(--space-8);
+        }
+
+        .results-header__title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--color-dark);
+            margin-bottom: var(--space-2);
+        }
+
+        .results-header__subtitle {
+            color: var(--color-gray);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: var(--space-4);
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--color-gray-light);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0s;
+        }
+
+        .recommended-card {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-base);
+        }
+
+        .recommended-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .recommended-card__image {
+            height: 160px;
+            overflow: hidden;
+        }
+
+        .recommended-card__image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .recommended-card__content {
+            padding: var(--space-4);
+        }
+
+        .recommended-card__title {
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-2);
+        }
+
+        .recommended-card__reason {
+            font-size: var(--text-sm);
+            color: var(--color-gray);
+            margin-bottom: var(--space-3);
+        }
+
+        .recommended-card__actions {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        @media (max-width: 768px) {
+
+            .survey-container,
+            .chat-container {
+                margin: 0 var(--space-4);
+            }
+
+            .recommend-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .recommend-tab {
+                width: 200px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header scrolled">
+        <div class="container">
+            <div class="header__inner">
+                <a href="main.html" class="header__logo">틈새</a>
+                <nav class="header__nav">
+                    <a href="main.html#places" class="header__link hover-underline">장소 탐색</a>
+                    <a href="recommend.html" class="header__link hover-underline"
+                        style="color: var(--color-primary);">AI 추천</a>
+                    <a href="planner.html" class="header__link hover-underline">여행 계획</a>
+                </nav>
+                <a href="planner.html" class="btn btn-primary btn-sm">내 일정 보기</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Recommend Page -->
+    <main class="recommend-page">
+        <div class="container">
+            <!-- Header -->
+            <div class="recommend-header reveal">
+                <h1 class="recommend-header__title">
+                    <span>AI</span>가 추천하는 나만의 여행
+                </h1>
+                <p class="recommend-header__subtitle">
+                    설문에 답하거나 원하는 내용을 입력하면 딱 맞는 장소를 추천해드려요
+                </p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="recommend-tabs reveal">
+                <button class="recommend-tab active" data-tab="survey">
+                    📋 설문으로 추천받기
+                </button>
+                <button class="recommend-tab" data-tab="chat">
+                    💬 직접 입력하기
+                </button>
+            </div>
+
+            <!-- Survey Tab -->
+            <div class="tab-content active" id="tab-survey">
+                <div class="survey-container">
+                    <div class="survey-progress" id="survey-progress">
+                        <div class="survey-progress__dot active"></div>
+                        <div class="survey-progress__dot"></div>
+                        <div class="survey-progress__dot"></div>
+                        <div class="survey-progress__dot"></div>
+                        <div class="survey-progress__dot"></div>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div class="survey-question active" data-question="1">
+                        <div class="survey-question__number">질문 1/5</div>
+                        <h2 class="survey-question__text">오늘 어떤 기분이세요?</h2>
+                        <div class="survey-options">
+                            <button class="survey-option" data-value="힐링">🧘 힐링이 필요해요</button>
+                            <button class="survey-option" data-value="활동적">🏃 활동적이고 싶어요</button>
+                            <button class="survey-option" data-value="감성">💫 감성적인 시간을 보내고 싶어요</button>
+                            <button class="survey-option" data-value="탐험">🗺️ 새로운 곳을 탐험하고 싶어요</button>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="survey-question" data-question="2">
+                        <div class="survey-question__number">질문 2/5</div>
+                        <h2 class="survey-question__text">누구와 함께하시나요?</h2>
+                        <div class="survey-options">
+                            <button class="survey-option" data-value="혼자">🧑 혼자</button>
+                            <button class="survey-option" data-value="연인">💑 연인과</button>
+                            <button class="survey-option" data-value="친구">👫 친구와</button>
+                            <button class="survey-option" data-value="가족">👨‍👩‍👧 가족과</button>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="survey-question" data-question="3">
+                        <div class="survey-question__number">질문 3/5</div>
+                        <h2 class="survey-question__text">선호하는 분위기는?</h2>
+                        <div class="survey-options">
+                            <button class="survey-option" data-value="조용한">🤫 조용하고 한적한</button>
+                            <button class="survey-option" data-value="자연">🌲 자연 속에서</button>
+                            <button class="survey-option" data-value="도시">🏙️ 도심 속 감성</button>
+                            <button class="survey-option" data-value="역사">🏛️ 역사와 문화가 있는</button>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="survey-question" data-question="4">
+                        <div class="survey-question__number">질문 4/5</div>
+                        <h2 class="survey-question__text">시간대는 언제인가요?</h2>
+                        <div class="survey-options">
+                            <button class="survey-option" data-value="오전">🌅 오전 (아침 산책)</button>
+                            <button class="survey-option" data-value="오후">☀️ 오후 (한낮 탐방)</button>
+                            <button class="survey-option" data-value="저녁">🌆 저녁 (노을 감상)</button>
+                            <button class="survey-option" data-value="밤">🌃 밤 (야경 투어)</button>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="survey-question" data-question="5">
+                        <div class="survey-question__number">질문 5/5</div>
+                        <h2 class="survey-question__text">가장 원하는 것은?</h2>
+                        <div class="survey-options">
+                            <button class="survey-option" data-value="사진">📸 인생샷 남기기</button>
+                            <button class="survey-option" data-value="휴식">☕ 여유로운 휴식</button>
+                            <button class="survey-option" data-value="산책">🚶 산책하며 생각 정리</button>
+                            <button class="survey-option" data-value="데이트">❤️ 특별한 데이트</button>
+                        </div>
+                    </div>
+
+                    <div class="survey-nav">
+                        <button class="btn btn-glass" id="survey-prev" style="visibility: hidden;">
+                            ← 이전
+                        </button>
+                        <button class="btn btn-primary" id="survey-next" disabled>
+                            다음 →
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Tab -->
+            <div class="tab-content" id="tab-chat">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-message chat-message--ai">
+                            <div class="chat-message__sender">틈새 AI</div>
+                            <div class="chat-message__text">
+                                안녕하세요! 저는 틈새 AI예요 🌿<br><br>
+                                어떤 여행을 원하시는지 자유롭게 말씀해주세요.<br>
+                                예: "혼자 조용히 산책할 수 있는 곳", "연인과 야경 볼 수 있는 곳", "사진 찍기 좋은 감성 장소" 등
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <textarea class="chat-input" id="chat-input" placeholder="원하는 여행 스타일을 자유롭게 입력하세요..."
+                            rows="1"></textarea>
+                        <button class="chat-send-btn" id="chat-send">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13" />
+                                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section (Hidden initially) -->
+            <div id="results-section" style="display: none; margin-top: var(--space-12);">
+                <div class="results-container">
+                    <div class="results-header">
+                        <h2 class="results-header__title" id="results-title">🌿 추천 결과</h2>
+                        <p class="results-header__subtitle" id="results-subtitle">당신에게 딱 맞는 장소들이에요</p>
+                    </div>
+                    <div class="results-grid" id="results-grid">
+                        <!-- Results will be rendered here -->
+                    </div>
+                    <div style="text-align: center; margin-top: var(--space-8);">
+                        <button class="btn btn-primary btn-lg" onclick="addAllToPlan()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M12 5v14M5 12h14" />
+                            </svg>
+                            모든 장소 일정에 추가
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script>
+        // Survey State
+        let currentQuestion = 1;
+        const totalQuestions = 5;
+        const surveyAnswers = {};
+
+        // DOM Elements
+        const tabs = document.querySelectorAll('.recommend-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const surveyQuestions = document.querySelectorAll('.survey-question');
+        const progressDots = document.querySelectorAll('.survey-progress__dot');
+        const prevBtn = document.getElementById('survey-prev');
+        const nextBtn = document.getElementById('survey-next');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSendBtn = document.getElementById('chat-send');
+
+        // Tab Switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+            });
+        });
+
+        // Survey Option Selection
+        document.querySelectorAll('.survey-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const question = option.closest('.survey-question');
+                question.querySelectorAll('.survey-option').forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+                surveyAnswers[currentQuestion] = option.dataset.value;
+                nextBtn.disabled = false;
+            });
+        });
+
+        // Survey Navigation
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion < totalQuestions) {
+                goToQuestion(currentQuestion + 1);
+            } else {
+                // Show results
+                generateSurveyResults();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 1) {
+                goToQuestion(currentQuestion - 1);
+            }
+        });
+
+        function goToQuestion(num) {
+            surveyQuestions.forEach(q => q.classList.remove('active'));
+            document.querySelector(`[data-question="${num}"]`).classList.add('active');
+
+            progressDots.forEach((dot, i) => {
+                dot.classList.remove('active');
+                if (i < num - 1) dot.classList.add('completed');
+                else dot.classList.remove('completed');
+                if (i === num - 1) dot.classList.add('active');
+            });
+
+            currentQuestion = num;
+
+            prevBtn.style.visibility = num > 1 ? 'visible' : 'hidden';
+            nextBtn.textContent = num === totalQuestions ? '결과 보기 →' : '다음 →';
+            nextBtn.disabled = !surveyAnswers[num];
+        }
+
+        // Generate Survey Results
+        function generateSurveyResults() {
+            const answers = Object.values(surveyAnswers);
+            let recommendedPlaces = [];
+
+            // Simple matching algorithm
+            placesData.forEach(place => {
+                let score = 0;
+
+                // Match based on answers
+                if (answers.includes('힐링') && (place.tags.includes('힐링') || place.category === '자연')) score += 2;
+                if (answers.includes('감성') && (place.tags.includes('감성') || place.category === '감성')) score += 2;
+                if (answers.includes('조용한') && place.congestion === 'quiet') score += 3;
+                if (answers.includes('자연') && place.category === '자연') score += 2;
+                if (answers.includes('역사') && place.category === '역사') score += 2;
+                if (answers.includes('밤') && (place.category === '야경' || place.tags.includes('야경'))) score += 3;
+                if (answers.includes('사진') && place.tags.includes('사진')) score += 2;
+                if (answers.includes('산책') && (place.category === '산책' || place.tags.includes('산책'))) score += 2;
+                if (answers.includes('혼자') && place.congestion === 'quiet') score += 1;
+                if (answers.includes('연인') && (place.tags.includes('감성') || place.category === '야경')) score += 1;
+
+                if (score > 0) {
+                    recommendedPlaces.push({ ...place, score });
+                }
+            });
+
+            // Sort by score and take top 4
+            recommendedPlaces.sort((a, b) => b.score - a.score);
+            recommendedPlaces = recommendedPlaces.slice(0, 4);
+
+            showResults(recommendedPlaces, '설문 응답을 분석했어요');
+        }
+
+        // Chat functionality
+        chatSendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addChatMessage(message, 'user');
+            chatInput.value = '';
+
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message chat-message--ai';
+            typingDiv.innerHTML = `
+        <div class="chat-message__sender">틈새 AI</div>
+        <div class="typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulate AI response
+            setTimeout(() => {
+                typingDiv.remove();
+                processUserMessage(message);
+            }, 1500);
+        }
+
+        function addChatMessage(text, type) {
+            const div = document.createElement('div');
+            div.className = `chat-message chat-message--${type}`;
+            div.innerHTML = `
+        <div class="chat-message__sender">${type === 'ai' ? '틈새 AI' : '나'}</div>
+        <div class="chat-message__text">${text}</div>
+      `;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function processUserMessage(message) {
+            const lowerMessage = message.toLowerCase();
+            let recommendedPlaces = [];
+
+            // Keyword matching
+            placesData.forEach(place => {
+                let score = 0;
+
+                // Check for keywords
+                if (lowerMessage.includes('조용') || lowerMessage.includes('한적')) {
+                    if (place.congestion === 'quiet') score += 3;
+                }
+                if (lowerMessage.includes('산책')) {
+                    if (place.category === '산책' || place.tags.includes('산책')) score += 2;
+                }
+                if (lowerMessage.includes('야경') || lowerMessage.includes('밤')) {
+                    if (place.category === '야경' || place.tags.includes('야경')) score += 3;
+                }
+                if (lowerMessage.includes('자연') || lowerMessage.includes('공원')) {
+                    if (place.category === '자연') score += 2;
+                }
+                if (lowerMessage.includes('감성') || lowerMessage.includes('예쁜')) {
+                    if (place.category === '감성' || place.tags.includes('감성')) score += 2;
+                }
+                if (lowerMessage.includes('사진') || lowerMessage.includes('인생샷')) {
+                    if (place.tags.includes('사진')) score += 2;
+                }
+                if (lowerMessage.includes('혼자')) {
+                    if (place.congestion === 'quiet') score += 2;
+                }
+                if (lowerMessage.includes('연인') || lowerMessage.includes('데이트')) {
+                    if (place.category === '야경' || place.category === '감성') score += 2;
+                }
+                if (lowerMessage.includes('역사') || lowerMessage.includes('고궁')) {
+                    if (place.category === '역사') score += 3;
+                }
+                if (lowerMessage.includes('힐링') || lowerMessage.includes('휴식')) {
+                    if (place.tags.includes('힐링') || place.category === '자연') score += 2;
+                }
+                if (lowerMessage.includes('카페')) {
+                    if (place.category === '카페') score += 3;
+                }
+                if (lowerMessage.includes('문화') || lowerMessage.includes('예술')) {
+                    if (place.category === '문화') score += 3;
+                }
+
+                if (score > 0) {
+                    recommendedPlaces.push({ ...place, score });
+                }
+            });
+
+            if (recommendedPlaces.length === 0) {
+                // If no matches, recommend random quiet places
+                recommendedPlaces = placesData.filter(p => p.congestion === 'quiet').slice(0, 3);
+                addChatMessage(
+                    `"${message}"에 대한 정확한 결과는 찾기 어렵지만, 한적하고 좋은 장소들을 추천해드릴게요! 🌿`,
+                    'ai'
+                );
+            } else {
+                recommendedPlaces.sort((a, b) => b.score - a.score);
+                recommendedPlaces = recommendedPlaces.slice(0, 4);
+                addChatMessage(
+                    `"${message}"에 딱 맞는 장소들을 찾았어요! 아래에서 확인해보세요 ✨`,
+                    'ai'
+                );
+            }
+
+            showResults(recommendedPlaces, '당신의 요청을 분석했어요');
+        }
+
+        function showResults(places, subtitle) {
+            const resultsSection = document.getElementById('results-section');
+            const resultsGrid = document.getElementById('results-grid');
+            const resultsSubtitle = document.getElementById('results-subtitle');
+
+            resultsSubtitle.textContent = subtitle;
+
+            resultsGrid.innerHTML = places.map(place => `
+        <div class="recommended-card">
+          <div class="recommended-card__image">
+            <img src="${place.images[0]}" alt="${place.name}">
+          </div>
+          <div class="recommended-card__content">
+            <h3 class="recommended-card__title">${place.name}</h3>
+            <p class="recommended-card__reason">${place.shortDesc}</p>
+            <div class="recommended-card__actions">
+              <a href="detail.html?id=${place.id}" class="btn btn-secondary btn-sm">자세히 보기</a>
+              <button class="btn btn-primary btn-sm" onclick="addToPlan(${place.id})">
+                + 일정 추가
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // Store recommended places
+            window.recommendedPlaces = places;
+        }
+
+        function addToPlan(placeId) {
+            let saved = JSON.parse(localStorage.getItem('teumsae_saved') || '[]');
+            if (!saved.includes(placeId)) {
+                saved.push(placeId);
+                localStorage.setItem('teumsae_saved', JSON.stringify(saved));
+                showToast('일정에 추가했습니다!');
+            } else {
+                showToast('이미 추가된 장소입니다.');
+            }
+        }
+
+        function addAllToPlan() {
+            if (!window.recommendedPlaces) return;
+
+            let saved = JSON.parse(localStorage.getItem('teumsae_saved') || '[]');
+            let added = 0;
+
+            window.recommendedPlaces.forEach(place => {
+                if (!saved.includes(place.id)) {
+                    saved.push(place.id);
+                    added++;
+                }
+            });
+
+            localStorage.setItem('teumsae_saved', JSON.stringify(saved));
+            showToast(`${added}개 장소를 일정에 추가했습니다!`);
+        }
+
+        function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = message;
+            toast.style.cssText = `
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--color-dark);
+        color: var(--color-white);
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 0.875rem;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+      `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(-50%) translateY(0)';
+            }, 10);
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(-50%) translateY(100px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        // Reveal animations
+        document.querySelectorAll('.reveal').forEach(el => {
+            setTimeout(() => el.classList.add('revealed'), 100);
+        });
+    </script>
+</body>
+
+</html>
