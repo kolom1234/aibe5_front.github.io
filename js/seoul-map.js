@@ -151,12 +151,35 @@ const SeoulMap = (function () {
 
         // Initialize Naver Map if first time, else move to new location
         if (!naverMap) {
-            console.log("Initializing Naver Map with Style ID:", CUSTOM_STYLE_ID);
+            console.log("Initializing Naver Map with ImageMapType (Custom Style)");
+
+            // Define Custom Map Type (ImageMapType)
+            const customMapType = new naver.maps.ImageMapType({
+                name: 'custom_style',
+                minZoom: 0,
+                maxZoom: 20,
+                tileSize: new naver.maps.Size(256, 256),
+                projection: naver.maps.fromLatLngToWebMercator,
+                repeatX: true,
+                tileSet: '',
+                getTile: function (x, y, z) {
+                    const styleId = '4166f2a1-c2fa-4d09-92ae-13802768e969';
+                    const version = '20260122101856';
+                    return `https://map.pstatic.net/nrb/styles/${styleId}/${version}/${z}/${x}/${y}.png?mt=bg.ol.sw.ar.lko`;
+                }
+            });
+
+            const registry = new naver.maps.MapTypeRegistry();
+            registry.set('custom_style', customMapType);
+
             naverMap = new naver.maps.Map('naver-map', {
                 center: new naver.maps.LatLng(lat, lng),
                 zoom: 15,
-                gl: true, // Activate GL (Vector Map)
-                customStyleId: CUSTOM_STYLE_ID // My Style ID
+                mapTypes: registry,
+                mapTypeId: 'custom_style', // Force use of this map type
+                mapDataControl: false,
+                scaleControl: false,
+                backgroundColor: '#121212'
             });
         } else {
             const newCenter = new naver.maps.LatLng(lat, lng);
