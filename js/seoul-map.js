@@ -162,7 +162,7 @@ const SeoulMap = (function () {
                 projection: naver.maps.fromLatLngToWebMercator,
                 repeatX: true,
                 tileSet: '',
-                getTile: function (x, y, z) {
+                getTileUrl: function (x, y, z) {
                     const styleId = '4166f2a1-c2fa-4d09-92ae-13802768e969';
                     const version = '20260122101856';
                     return `https://map.pstatic.net/nrb/styles/${styleId}/${version}/${z}/${x}/${y}.png?mt=bg.ol.sw.ar.lko`;
