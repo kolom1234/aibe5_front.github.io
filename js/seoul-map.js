@@ -153,7 +153,8 @@ const SeoulMap = (function () {
                 center: new naver.maps.LatLng(lat, lng),
                 zoom: 15,
                 mapDataControl: false,
-                scaleControl: false
+                scaleControl: false,
+                isNightModeEnabled: true
             });
         } else {
             const newCenter = new naver.maps.LatLng(lat, lng);
