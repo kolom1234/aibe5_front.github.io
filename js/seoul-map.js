@@ -2,6 +2,7 @@
 const SeoulMap = (function () {
     let isInitialized = false;
     let naverMap = null;
+    let cachedGeoJSON = null;
     const SEOUL_GEOJSON_URL = 'https://raw.githubusercontent.com/southkorea/seoul-maps/master/kostat/2013/json/seoul_municipalities_geo_simple.json';
 
     // District Centroids (Approximate)
@@ -43,6 +44,7 @@ const SeoulMap = (function () {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
             const data = await response.json();
+            cachedGeoJSON = data;
             renderGeoJSONToSVG(data);
             isInitialized = true;
             console.log("Seoul Map Rendered Successfully");
@@ -57,6 +59,13 @@ const SeoulMap = (function () {
     }
 
     function renderGeoJSONToSVG(geojson) {
+        // Use cached data if argument is missing (e.g. backToSeoul calls)
+        geojson = geojson || cachedGeoJSON;
+        if (!geojson) {
+            console.error("No GeoJSON data available to render");
+            return;
+        }
+
         const svg = document.getElementById('seoul-svg');
         if (!svg) return;
 
@@ -158,11 +167,14 @@ const SeoulMap = (function () {
                 scaleControl: false
             });
         } else {
-            naverMap.setGL(true);
             const newCenter = new naver.maps.LatLng(lat, lng);
             naverMap.setCenter(newCenter);
             naverMap.setZoom(15);
-            naverMap.customStyleId('4166f2a1-c2fa-4d09-92ae-13802768e969');
+            // Re-apply style if needed, though it usually persists.
+            // Using setOptions correctly instead of non-existent methods.
+            naverMap.setOptions({
+                customStyleId: '4166f2a1-c2fa-4d09-92ae-13802768e969'
+            });
         }
 
         console.log(`Switched to Naver Map: ${name}`);
