@@ -158,9 +158,11 @@ const SeoulMap = (function () {
                 scaleControl: false
             });
         } else {
+            naverMap.setGL(true);
             const newCenter = new naver.maps.LatLng(lat, lng);
             naverMap.setCenter(newCenter);
             naverMap.setZoom(15);
+            naverMap.customStyleId('4166f2a1-c2fa-4d09-92ae-13802768e969');
         }
 
         console.log(`Switched to Naver Map: ${name}`);
