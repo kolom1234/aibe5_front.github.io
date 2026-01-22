@@ -148,7 +148,7 @@ const SeoulMap = (function () {
 
         // Initialize Naver Map if first time, else move to new location
         if (!naverMap) {
-            console.log("Initializing Naver Map with dark theme");
+            console.log("Initializing Naver Map");
             naverMap = new naver.maps.Map('naver-map', {
                 center: new naver.maps.LatLng(lat, lng),
                 zoom: 15,
